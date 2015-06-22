@@ -8,23 +8,15 @@ This demo addon only records what function users use and the time
 when they use it. It does not capture any geo data and no piece of
 data is traceable back to a specific user.
 
-This addon also shows how to implement an auto check for update
-function in the addon.
-
-
-SETUP:
-1 - Create a parse app (parse.com)
-2 - Save the app key and rest api key to the according variables below (note security point)
-3 - Create the classes "usage" and "usage_dev" on parse (under the data tab)
-4 - Put the function call >> usageStat(function) << at the beginning of each operator's execution function
-5 - *Set v (verbose) to false before distributing the addon!*
+For more information, go to:
+https://github.com/TheDuckCow/Addon-Usage-Analytics
 
 """
 
 bl_info = {
 	"name": "Demo Usage Analytics",
 	"category": "Object",
-	"version": (1, 0, 0),
+	"version": (1, 0, 1),
 	"blender": (2, 74, 0),
 	"location": "3D window toolshelf > Tools tab",
 	"description": "Demo addon for capturing anonymous user data for analytics",
@@ -36,15 +28,12 @@ bl_info = {
 
 import bpy
 v = True # verbose, for debugging. Will also push data up to a _dev parse class instead of publicly used class
-ver = '(1, 0, 0)' # for pushing the version up to the database, useful to know
+ver = '(1, 0, 1)' # for pushing the version up to the database, useful to know
 
 # app keys, specific to each Parse app. Be careful with the security of this!
-# For example, in my own app I grab the key from elsewhere instewad of writing it
-# into the script plain text itself
-appkey = "BOPratw0jJd9nCat1nsSAoz5DHLuXkH4Babac3Mm"  #"the App key" 
-restkey = "w191hFSOi0ExcoQGQzCP81QhzcsViOE2SfBNC1Ya"  #"the REST API key"
+appkey = ""  #"the App key" 
+restkey = ""  #"the REST API key"
 classname = 'usage'
-
 
 
 def usageStat(function):
@@ -86,7 +75,6 @@ def usageStat(function):
 		return
 
 
-
 def checkForUpdate():
 	addon_prefs = bpy.context.user_preferences.addons[__name__].preferences
 	try:
@@ -96,10 +84,12 @@ def checkForUpdate():
 			# the code below will run at most once per blender session
 			addon_prefs.checked_update = True
 			import urllib.request
-			page = urllib.request.urlopen("http://website_where_you_can_parse_version_id",timeout=10).read().decode('utf-8')
+			# obviously change this website to the according one and change the parsing to fit
+			page = urllib.request.urlopen("https://raw.githubusercontent.com/TheDuckCow/Addon-Usage-Analytics/master/stats.py",timeout=10).read().decode('utf-8')
 			
 			# parse for the version ID parsed from whatever website, will depend on the context/setup
-			currentVersion = "parse from webpage, page"
+			tmp = page.split('"version": ')[1]
+			currentVersion = tmp.split(')')[0]+')'
 			
 			# check to see if the versions match, assumes if they are different it means local is outdated
 			if currentVersion != ver:
@@ -113,7 +103,6 @@ def checkForUpdate():
 				return False
 	except:
 		pass
-
 
 
 ########
@@ -135,7 +124,6 @@ class OBJECT_OT_add_object(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-
 ########
 # quickly open release webpage for update
 class openreleasepage(bpy.types.Operator):
@@ -146,11 +134,10 @@ class openreleasepage(bpy.types.Operator):
 	def execute(self, context):
 		try:
 			import webbrowser
-			webbrowser.open("https://github.com/TheDuckCow/MCprep/releases")
+			webbrowser.open("https://github.com/TheDuckCow/Addon-Usage-Analytics")
 		except:
 			pass
 		return {'FINISHED'}
-
 
 
 #######
@@ -167,7 +154,7 @@ class demoPanel(bpy.types.Panel):
 		layout = self.layout
 		split = layout.split()
 		col = split.column(align=True)
-		col.label(text="is it working")
+		#col.label(text="is it working")
 		split = layout.split()
 		col = split.column(align=True)
 		col.operator("mesh.add_object", text="Add Object")
@@ -180,8 +167,7 @@ class demoPanel(bpy.types.Panel):
 			col.label (text="Update available!", icon='ERROR')
 			split = layout.split()
 			col = split.row(align=True)
-			row.operator("object.openreleasepage", text="Get it now")
-
+			col.operator("object.openreleasepage", text="Get it now")
 
 
 #######
@@ -205,16 +191,14 @@ class userPreferencesPanel(bpy.types.AddonPreferences):
 	def draw(self, context):
 		layout = self.layout
 		row = layout.row()
-		row.label(text="is it working")
+		row.label(text="Consider opting into analytics to help future development!")
 		col = layout.row(align=True)
 		if self.stats_optin:
 			col.prop(self, "stats_optin", text="Press to opt OUT of anonymous usage tracking", icon='CANCEL')
-			row.label(text="is it working")
 			col = layout.row(align=True)
 			col.label(text="Be sure to save user preference to keep the optin enabled!")
 		else:
 			col.prop(self, "stats_optin", text="Press to opt into of anonymous usage tracking", icon='HAND')
-
 
 
 def register():
@@ -223,7 +207,6 @@ def register():
 	bpy.utils.register_class(openreleasepage)
 	bpy.utils.register_class(demoPanel)
 	
-
 
 def unregister():
 	bpy.utils.unregister_class(userPreferencesPanel)
