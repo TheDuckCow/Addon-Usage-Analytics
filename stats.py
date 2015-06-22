@@ -164,10 +164,12 @@ class demoPanel(bpy.types.Panel):
 		# section for showing update if one is available
 		# to test this, change the version number above
 		if checkForUpdate():
-			col.label (text="Update available!", icon='ERROR')
+			col.label(text="Update available!", icon='ERROR')
 			split = layout.split()
 			col = split.row(align=True)
 			col.operator("object.openreleasepage", text="Get it now")
+		else:
+			col.label(text="No update found")
 
 
 #######
