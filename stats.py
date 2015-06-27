@@ -31,8 +31,8 @@ v = True # verbose, for debugging. Will also push data up to a _dev parse class 
 ver = '(1, 0, 1)' # for pushing the version up to the database, useful to know
 
 # app keys, specific to each Parse app. Be careful with the security of this!
-appkey = ""  #"the App key" 
-restkey = ""  #"the REST API key"
+appkey = "appkeysupercalifragilisticexpialidocious"  #"the App key" 
+restkey = "restkeysupercalifragilisticexpialidocious"  #"the REST API key"
 classname = 'usage'
 
 
