@@ -1,5 +1,5 @@
 """
-This sample code is being released without any license or warranty.
+This sample code is being released under the MIT license (as-is, no warranty).
 Use at your own risk, and be mindful to make sure users know what
 data is being shared, if it is being shared, and provide the option
 to opt-out if it isn't already an opt-in situation.
@@ -152,9 +152,6 @@ class demoPanel(bpy.types.Panel):
 	def draw(self, context):
 		
 		layout = self.layout
-		split = layout.split()
-		col = split.column(align=True)
-		#col.label(text="is it working")
 		split = layout.split()
 		col = split.column(align=True)
 		col.operator("mesh.add_object", text="Add Object")
